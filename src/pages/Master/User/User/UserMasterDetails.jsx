@@ -26,26 +26,6 @@ const header = {
 	},
 };
 
-// form field validation schema
-const validationSchema = Yup.object().shape({
-	firstName: Yup.string().required("First name is required!"),
-	lastName: Yup.string().required("Last name is required!"),
-	email: Yup.string().email().required("Email is required!"),
-	profile: Yup.mixed()
-		.test({
-			message: "Please provide a supported file type [png, jpg, jpeg]",
-			test: (file, context) => {
-				let isValid = true;
-				if (file) {
-					isValid = ["png", "jpg", "jpeg"].includes(file.name.slice(((file.name.lastIndexOf(".") - 1) >>> 0) + 2));
-					if (!isValid) context?.createError();
-				}
-				return isValid;
-			},
-		})
-		.test("FILE_SIZE", "Max file size 1MB", (value) => !value || (value && value.size <= 1048576)),
-});
-
 const UserMasterDetails = ({ open, togglePopup, userData }) => {
 	const url = apiEndPoint.user;
 
@@ -58,7 +38,7 @@ const UserMasterDetails = ({ open, togglePopup, userData }) => {
 		firstName: "required",
 		lastName: "required",
 		email: "required",
-		profile: "required",
+		profile: "required|mimes:png,jpg,jpeg|max_file_size:1048576",
 	  };
 	
 	  //  --------------handle onSubmit   --------------
@@ -169,7 +149,7 @@ const UserMasterDetails = ({ open, togglePopup, userData }) => {
 									name="profile"
 									onChange={onChange}
 									value={formState?.profile}
-									error={errors}
+									error={errors?.profile}
 								/>
 								<Box>
 									<Button variant="outlined" color="secondary" onClick={togglePopup}>
@@ -189,7 +169,7 @@ const UserMasterDetails = ({ open, togglePopup, userData }) => {
 									label="First Name"
 									value={formState.firstName}
 									onChange={onChange}
-									error={errors}
+									error={errors?.firstName}
 									sx={{ mb: 2, mt: 1, width: "49%" }}
 								/>
 								<Textinput
@@ -198,7 +178,7 @@ const UserMasterDetails = ({ open, togglePopup, userData }) => {
 									label="Last Name"
 									value={formState.lastName}
 									onChange={onChange}
-									error={errors}
+									error={errors?.lastName}
 									sx={{ mb: 2, mt: 1, ml: 0.5, width: "49.5%" }}
 								/>
 								<Textinput
@@ -209,7 +189,7 @@ const UserMasterDetails = ({ open, togglePopup, userData }) => {
 									label="Email"
 									value={formState.email}
 									onChange={onChange}
-									error={errors}
+									error={errors?.email}
 									sx={{ mb: 2, mt: 1 }}
 									InputProps={{
 										startAdornment: <InputAdornment position="start">@</InputAdornment>,

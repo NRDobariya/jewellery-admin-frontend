@@ -48,7 +48,7 @@ const Textinput = ({
             invalid={error ? true : false}
         />
 
-        <ValidationMessages errors={!HELPER.isEmpty(error[name]) ? error[name] : null} label={label} />
+        <ValidationMessages errors={error} label={label} />
       </div>
   );
 };

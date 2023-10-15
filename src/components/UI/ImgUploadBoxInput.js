@@ -39,7 +39,7 @@ export default function ImgUploadBoxInput({error, name, onChange,value,...rest})
                                 width: 50,
                                 maxHeight: { xs: 25, md: 50 },
                                 maxWidth: { xs: 25, md: 50 },
-                                ...(Boolean(error[name]) && {
+                                ...(Boolean(error) && {
                                     border: "2px solid #FF3D57",
                                 }),
                             }}
@@ -53,9 +53,9 @@ export default function ImgUploadBoxInput({error, name, onChange,value,...rest})
                     )}
                 </IconButton>
             </label>
-            {Boolean(!HELPER.isEmpty(error[name])) && (
+            {Boolean(!HELPER.isEmpty(error)) && (
                 <>
-                    {error[name].map((itemError) => (
+                    {error.map((itemError) => (
                         <p style={{ color: "#FF3D57", fontSize: "12px" }}>{itemError}</p>
                     ))}
                 </>
