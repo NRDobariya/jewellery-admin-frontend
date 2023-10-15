@@ -61,7 +61,7 @@ const UserMasterDetails = ({ open, togglePopup, userData }) => {
 		profile: "required",
 	  };
 	
-	  //  --------------handle onSubmit Blog  --------------
+	  //  --------------handle onSubmit   --------------
 	  const handleSubmit = (data) => {
 		const fd = new FormData();
 

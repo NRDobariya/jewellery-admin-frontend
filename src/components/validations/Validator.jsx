@@ -15,6 +15,76 @@ const _registerConfirmPasswordValidations = (password) => {
   );
 };
 
+const _registerFileuploadValidations = () => {
+  Validator.register(
+    "mimes",
+    function (value, requirement, attribute) {
+      const allowedExtensions = requirement.split(',');
+      const fileExtension = value.name.split('.').pop();
+      if (!allowedExtensions.includes(fileExtension)) {
+        return false; // Invalid file type
+      }
+      return true;
+    },
+    "The :attribute must be a file of type :mime_types"
+  );
+
+Validator.register(
+    "max_file_size",
+    function (value, requirement, attribute) {
+        if (value.size > Number(requirement)) {
+            return false; // File size exceeds 1MB
+        }
+
+        return true
+    },
+    "Max file size is :max_size"
+  );
+
+  Validator.register(
+    "min_file_size",
+    function (value, requirement, attribute) {
+        if (value.size < Number(requirement)) {
+            return false; // File size exceeds 1MB
+        }
+
+        return true
+    },
+    "Min file size is :min_size"
+  );
+};
+
+const imageValidationMessagesModification = (errors, rules) => {
+  for (let [field, errorMsgs] of Object.entries(errors)) {
+      errors[field] = errorMsgs.map(messages => {
+          if (messages.includes(':mime_types')) {
+
+              let attributeMimeTypes = rules[field].split('|').find(e => e.includes('mimes')).replace('mimes:', '')
+              messages = messages.replace(':mime_types', attributeMimeTypes).replace(':attribute', field)
+          }
+
+          if (messages.includes(':max_size')) {
+              let attributeValue = rules[field].split('|').find(e => e.includes('max_file_size')).replace('max_file_size:', '')
+              messages = messages.replace(':max_size', formatBytes(attributeValue))
+          }
+
+          if (messages.includes(':min_size')) {
+              let attributeValue = rules[field].split('|').find(e => e.includes('min_file_size')).replace('min_file_size:', '')
+              messages = messages.replace(':min_size', formatBytes(attributeValue))
+          }
+
+          return messages;
+      });
+  }
+
+  return errors;
+}
+
+const _registerValidations = (formState, rules) => {
+  _registerConfirmPasswordValidations(formState?.password)
+  _registerFileuploadValidations()
+}
+
 export default function Validators({
   registerValidations = null,
   setErrors: errorsData = null,
@@ -56,14 +126,17 @@ export default function Validators({
 
   const isValidationFail = () => {
     Validator.setMessages("en", validationMessages);
-    _registerConfirmPasswordValidations();
+
+    _registerValidations(formData, rules);
+
     let validation = new Validator(formData, rules, customValidationMessages);
     validation.setAttributeFormatter(function (attribute) {
       return ":attribute";
     });
 
     if (validation.fails()) {
-      setErrors(validation.errors.errors);
+      let validationErrors = imageValidationMessagesModification(validation.errors.errors, rules);
+      setErrors(validationErrors);
       return true;
     }
     return false;
