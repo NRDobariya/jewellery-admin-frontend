@@ -1,58 +1,49 @@
 import React from 'react'
+import { HELPER } from '../../services';
+import { Box, Icon, IconButton } from "@mui/material";
+import Textinput from './TextInput';
 
-export default function ImgUploadBoxInput({error}) {
+export default function ImgUploadBoxInput({error, name, onChange,value,...rest}) {
+  const randomStr = () => {
+    return Math.random(10).toString().slice(2);
+  }  
+  let randomId = 'file_upload_' + randomStr()
+
   return (
     <>
         <Box sx={{ display: "flex", alignContent: "center", flexWrap: "unset" }}>
-            <TextField
-                id="icon-button-file"
-                fullWidth={true}
-                size="small"
-                type="file"
-                name="profile"
-                inputProps={{ accept: "image/*" }}
-                sx={{ mt: 1, mb: 2, display: "none" }}
-                onChange={(e) => {
-                    formikProps.setFieldValue("profile", e.currentTarget.files[0]);
-                }}
-                onBlur={formikProps.handleBlur}
-                helperText={formikProps.touched.profile && formikProps.errors.profile}
-                error={Boolean(formikProps.errors.profile && formikProps.touched.profile)}
-            />
             <Textinput
                 size="small"
                 type="file"
                 onChange={onChange}
-                id="icon-button-file"
-                fullWidth={true}
-                name="profile"
+                id={randomId}
+                name={name}
                 inputProps={{ accept: "image/*" }}
                 sx={{ mt: 1, mb: 2, display: "none" }}
+                {...rest}
             />
-            <label htmlFor="icon-button-file">
+            <label htmlFor={randomId}>
                 <IconButton
                     color="primary"
-                    id="profile"
                     component="span"
                     className="button"
-                    onBlur={formikProps.handleBlur}
                     aria-label="Upload picture"
                     disableRipple={true}
                 >
-                    {formState.profile && formState.profile !== null ? (
+                    {value && value !== null ? (
                         <Box
-                            id="image"
+                            id={`image_${randomStr()}`}
                             component="img"
                             sx={{
                                 height: 50,
                                 width: 50,
                                 maxHeight: { xs: 25, md: 50 },
                                 maxWidth: { xs: 25, md: 50 },
-                                ...(Boolean(formikProps.errors.profile && formikProps.touched.profile) && {
+                                ...(Boolean(error[name]) && {
                                     border: "2px solid #FF3D57",
                                 }),
                             }}
-                            src={URL.createObjectURL(formState.profile)}
+                            src={typeof value == 'string' ? value : URL.createObjectURL(value)}
                             onError={(e) => {
                                 e.target.src = "/assets/camera.svg";
                             }}
@@ -62,8 +53,12 @@ export default function ImgUploadBoxInput({error}) {
                     )}
                 </IconButton>
             </label>
-            {Boolean(formikProps.errors.profile && formikProps.touched.profile) && (
-                <p style={{ color: "#FF3D57", fontSize: "12px" }}>{formikProps.touched.profile && formikProps.errors.profile}</p>
+            {Boolean(!HELPER.isEmpty(error[name])) && (
+                <>
+                    {error[name].map((itemError) => (
+                        <p style={{ color: "#FF3D57", fontSize: "12px" }}>{itemError}</p>
+                    ))}
+                </>
             )}
         </Box>
     </>

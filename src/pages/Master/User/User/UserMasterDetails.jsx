@@ -9,6 +9,7 @@ import Select from "react-select";
 import ThemeDialog from "../../../../components/UI/Dialog/ThemeDialog";
 import Validators from "./../../../../components/validations/Validator";
 import Textinput from "../../../../components/UI/TextInput";
+import ImgUploadBoxInput from "../../../../components/UI/ImgUploadBoxInput";
 
 // inital data
 const initialValues = {
@@ -111,7 +112,7 @@ const UserMasterDetails = ({ open, togglePopup, userData }) => {
 							isOpen={open}
 							onClose={togglePopup}
 							actionBtns={<>
-								<Box sx={{ display: "flex", alignContent: "center", flexWrap: "unset" }}>
+								{/* <Box sx={{ display: "flex", alignContent: "center", flexWrap: "unset" }}>
 									<TextField
 										id="icon-button-file"
 										fullWidth={true}
@@ -163,7 +164,13 @@ const UserMasterDetails = ({ open, togglePopup, userData }) => {
 									{Boolean(formikProps.errors.profile && formikProps.touched.profile) && (
 										<p style={{ color: "#FF3D57", fontSize: "12px" }}>{formikProps.touched.profile && formikProps.errors.profile}</p>
 									)}
-								</Box>
+								</Box> */}
+								<ImgUploadBoxInput 
+									name="profile"
+									onChange={onChange}
+									value={formState?.profile}
+									error={errors}
+								/>
 								<Box>
 									<Button variant="outlined" color="secondary" onClick={togglePopup}>
 										Cancel
@@ -182,7 +189,6 @@ const UserMasterDetails = ({ open, togglePopup, userData }) => {
 									label="First Name"
 									value={formState.firstName}
 									onChange={onChange}
-									helperText={formikProps.touched.firstName && formikProps.errors.firstName}
 									error={errors}
 									sx={{ mb: 2, mt: 1, width: "49%" }}
 								/>
